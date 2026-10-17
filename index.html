@@ -1,0 +1,1470 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raider Toolkit</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:#080a0f;overflow:hidden;font-family:'Chakra Petch',sans-serif}
+#f{position:absolute;inset:0 0 58px 0}
+iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:none;background:#080a0f}
+iframe.on{display:block}
+nav{position:absolute;left:0;right:0;bottom:0;height:58px;display:flex;background:#0f131c;border-top:1px solid #222b3d}
+nav button{flex:1;background:none;border:0;border-top:3px solid transparent;color:#8a99ad;font:700 12px 'Chakra Petch',sans-serif;letter-spacing:1.5px;text-transform:uppercase}
+nav button.on{color:#00d8ff;border-top-color:#00d8ff;background:rgba(0,216,255,.08)}
+nav button:nth-child(2).on{color:#00ff66;border-top-color:#00ff66;background:rgba(0,255,102,.08)}
+nav button:nth-child(3).on{color:#ffcc00;border-top-color:#ffcc00;background:rgba(255,204,0,.08)}
+</style></head><body>
+<div id="f">
+<iframe id="p0"></iframe>
+<iframe id="p1"></iframe>
+<iframe id="p2"></iframe>
+</div>
+<nav><button id="b0" onclick="go(0)">Calculator</button><button id="b1" onclick="go(1)">Upgrades</button><button id="b2" onclick="go(2)">Crafting</button></nav>
+<script type="text/plain" id="pg0"><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARC Raiders - Retro Tactical Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,500;0,600;0,700;1,500;1,700&family=Russo+One&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      /* Retro Palette matching ARC Raiders & reference image */
+      --retro-cyan: #00d8ff;
+      --retro-green: #00ff66;
+      --retro-yellow: #ffcc00;
+      --retro-red: #ff2a4b;
+      --retro-purple: #b255ff;
+      
+      --glow-cyan: rgba(0, 216, 255, 0.4);
+      --glow-green: rgba(0, 255, 102, 0.4);
+      --glow-yellow: rgba(255, 204, 0, 0.4);
+      --glow-red: rgba(255, 42, 75, 0.4);
+      --glow-purple: rgba(178, 85, 255, 0.4);
+
+      --bg-deep: #080a0f;
+      --panel-bg: #0f131c;
+      --panel-border: #222b3d;
+      
+      --text-main: #f0f4f8;
+      --text-muted: #8a99ad;
+
+      --chamfer: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+      --chamfer-lg: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 22px 100%, 0 calc(100% - 22px));
+      --chamfer-btn: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      font-family: 'Chakra Petch', sans-serif;
+      background-color: var(--bg-deep);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 0 0 90px 0;
+      position: relative;
+      overflow-x: hidden;
+      background-image: 
+        linear-gradient(rgba(0, 216, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 216, 255, 0.03) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+
+    /* Top Retro 4-Color Stripe Ribbon */
+    .retro-stripe-banner {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding-top: 4px;
+      background: #000;
+      box-shadow: 0 0 25px rgba(0, 216, 255, 0.2);
+    }
+
+    .stripe-line {
+      height: 6px;
+      width: 100%;
+      position: relative;
+    }
+
+    .stripe-cyan { background-color: var(--retro-cyan); box-shadow: 0 0 10px var(--glow-cyan); }
+    .stripe-green { background-color: var(--retro-green); box-shadow: 0 0 10px var(--glow-green); }
+    .stripe-yellow { background-color: var(--retro-yellow); box-shadow: 0 0 10px var(--glow-yellow); }
+    .stripe-red { background-color: var(--retro-red); box-shadow: 0 0 10px var(--glow-red); }
+
+    /* App Layout Container */
+    .container {
+      max-width: 1050px;
+      margin: 0 auto;
+      padding: 24px 16px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Header Design */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--panel-border);
+      position: relative;
+    }
+
+    .brand-block {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand-stripes-icon {
+      display: flex;
+      transform: skewX(-20deg);
+      gap: 4px;
+      padding: 4px;
+      background: rgba(0,0,0,0.6);
+      border: 1px solid var(--panel-border);
+    }
+
+    .stripe-bar {
+      width: 8px;
+      height: 38px;
+      border-radius: 1px;
+    }
+
+    .brand-text h1 {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .brand-text h1 span {
+      color: var(--retro-red);
+      text-shadow: 0 0 12px var(--glow-red);
+    }
+
+    .brand-sub {
+      font-family: 'Space Mono', monospace;
+      font-size: 13px;
+      color: var(--retro-cyan);
+      letter-spacing: 2px;
+      margin-top: 4px;
+      font-weight: 700;
+    }
+
+    .system-status {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--retro-green);
+      background: rgba(0, 255, 102, 0.1);
+      border: 1px solid var(--retro-green);
+      padding: 3px 10px;
+      clip-path: var(--chamfer-btn);
+      font-family: 'Chakra Petch', sans-serif;
+      font-weight: 600;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      background-color: var(--retro-green);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--retro-green);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* Mode Selection Tabs */
+    .mode-tabs {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .mode-btn {
+      flex: 1;
+      padding: 14px;
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      color: var(--text-muted);
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      cursor: pointer;
+      text-transform: uppercase;
+      clip-path: var(--chamfer);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .mode-btn:hover {
+      border-color: var(--retro-cyan);
+      color: #fff;
+    }
+
+    .mode-btn.active-pve {
+      background: linear-gradient(135deg, rgba(0, 216, 255, 0.15), rgba(0, 255, 102, 0.1));
+      border: 1px solid var(--retro-cyan);
+      color: var(--retro-cyan);
+      box-shadow: 0 0 15px var(--glow-cyan);
+    }
+
+    .mode-btn.active-pvp {
+      background: linear-gradient(135deg, rgba(255, 42, 75, 0.2), rgba(255, 204, 0, 0.15));
+      border: 1px solid var(--retro-red);
+      color: #fff;
+      box-shadow: 0 0 15px var(--glow-red);
+    }
+
+    /* Grid Layout */
+    .controls-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 768px) {
+      .controls-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      padding: 20px;
+      clip-path: var(--chamfer);
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--panel-border);
+    }
+
+    .panel-title {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--retro-yellow);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-code {
+      font-family: 'Space Mono', monospace;
+      font-size: 13px;
+      color: var(--retro-cyan);
+    }
+
+    /* Filter Chips */
+    .filter-chips {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      padding: 4px 10px;
+      background: #080b10;
+      border: 1px solid var(--panel-border);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      clip-path: var(--chamfer-btn);
+      text-transform: uppercase;
+    }
+
+    .chip.active, .chip:hover {
+      background: var(--retro-cyan);
+      color: #000;
+      border-color: var(--retro-cyan);
+      font-weight: bold;
+      box-shadow: 0 0 10px var(--glow-cyan);
+    }
+
+    /* Form Controls */
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+
+    label {
+      display: block;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px;
+      background-color: #080a0e;
+      border: 1px solid #283347;
+      color: #fff;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      clip-path: var(--chamfer-btn);
+      outline: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    select:focus, select:hover {
+      border-color: var(--retro-yellow);
+      box-shadow: 0 0 12px var(--glow-yellow);
+    }
+
+    /* Shield Selector Grid for PvP */
+    .shield-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    @media (max-width: 480px) {
+      .shield-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .shield-btn {
+      padding: 10px 4px;
+      background: #080a0e;
+      border: 1px solid #283347;
+      color: var(--text-muted);
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      clip-path: var(--chamfer-btn);
+      transition: all 0.2s ease;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .shield-btn span.shield-sub {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      opacity: 0.8;
+    }
+
+    .shield-btn.active-none {
+      border-color: #8a99ad;
+      color: #fff;
+      background: rgba(138, 153, 173, 0.15);
+    }
+
+    .shield-btn.active-light {
+      border-color: var(--retro-green);
+      color: var(--retro-green);
+      background: rgba(0, 255, 102, 0.15);
+      box-shadow: 0 0 10px var(--glow-green);
+    }
+
+    .shield-btn.active-medium {
+      border-color: var(--retro-cyan);
+      color: var(--retro-cyan);
+      background: rgba(0, 216, 255, 0.15);
+      box-shadow: 0 0 10px var(--glow-cyan);
+    }
+
+    .shield-btn.active-heavy {
+      border-color: var(--retro-purple);
+      color: var(--retro-purple);
+      background: rgba(178, 85, 255, 0.15);
+      box-shadow: 0 0 10px var(--glow-purple);
+    }
+
+    /* Retro Toggle Buttons */
+    .toggle-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .toggle-btn {
+      padding: 12px;
+      background: #080a0e;
+      border: 1px solid #283347;
+      color: var(--text-muted);
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      clip-path: var(--chamfer-btn);
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .toggle-btn:hover {
+      border-color: var(--retro-green);
+      color: #fff;
+    }
+
+    .toggle-btn.active {
+      background: linear-gradient(135deg, rgba(255, 42, 75, 0.2), rgba(255, 204, 0, 0.1));
+      border: 1px solid var(--retro-red);
+      color: #fff;
+      box-shadow: 0 0 15px var(--glow-red);
+    }
+
+    /* Primary HUD Card with 4-color stripe motif */
+    .result-hud {
+      background: var(--panel-bg);
+      border: 2px solid var(--panel-border);
+      clip-path: var(--chamfer-lg);
+      padding: 28px;
+      margin-bottom: 24px;
+      position: relative;
+      box-shadow: 0 0 35px rgba(0, 0, 0, 0.7);
+    }
+
+    .result-hud-stripe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      display: flex;
+    }
+
+    .result-hud-stripe div {
+      flex: 1;
+      height: 100%;
+    }
+
+    .hud-title-bar {
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .hud-summary {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--retro-cyan);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* Retro Numerical Readout */
+    .hits-display {
+      text-align: center;
+      margin: 12px 0 20px 0;
+      position: relative;
+    }
+
+    .hits-number {
+      font-family: 'Russo One', sans-serif;
+      font-size: 82px;
+      line-height: 0.9;
+      color: var(--retro-green);
+      text-shadow: 0 0 20px var(--glow-green), 0 0 35px var(--retro-green);
+      letter-spacing: 2px;
+    }
+
+    .hits-label {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--retro-yellow);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-top: 8px;
+    }
+
+    /* Segmented Analog Gauge */
+    .analog-gauge-box {
+      background: #06080c;
+      border: 1px solid #1d2536;
+      padding: 12px 16px;
+      margin-bottom: 24px;
+      clip-path: var(--chamfer-btn);
+    }
+
+    .gauge-header {
+      display: flex;
+      justify-content: space-between;
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .gauge-segments {
+      display: flex;
+      gap: 4px;
+      height: 16px;
+    }
+
+    .segment {
+      flex: 1;
+      background: #121824;
+      border-radius: 1px;
+      transition: background 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .segment.filled-cyan { background: var(--retro-cyan); box-shadow: 0 0 8px var(--glow-cyan); }
+    .segment.filled-green { background: var(--retro-green); box-shadow: 0 0 8px var(--glow-green); }
+    .segment.filled-yellow { background: var(--retro-yellow); box-shadow: 0 0 8px var(--glow-yellow); }
+    .segment.filled-red { background: var(--retro-red); box-shadow: 0 0 8px var(--glow-red); }
+
+    /* Stat Grid */
+    .stat-matrix {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      padding-top: 20px;
+      border-top: 1px dashed var(--panel-border);
+    }
+
+    @media (max-width: 640px) {
+      .stat-matrix {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .stat-box {
+      background: rgba(6, 8, 12, 0.8);
+      border: 1px solid #1a2230;
+      padding: 14px 10px;
+      text-align: center;
+      clip-path: var(--chamfer-btn);
+    }
+
+    .stat-value {
+      font-family: 'Russo One', sans-serif;
+      font-size: 26px;
+      line-height: 1.1;
+      color: #fff;
+    }
+
+    .stat-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 6px;
+      text-transform: uppercase;
+    }
+
+    /* Comparison Table Section */
+    .table-section {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      clip-path: var(--chamfer);
+      padding: 20px;
+      position: relative;
+    }
+
+    .table-title {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--retro-cyan);
+      margin-bottom: 16px;
+      letter-spacing: 1.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-family: 'Space Mono', monospace;
+    }
+
+    th {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      color: var(--retro-yellow);
+      background: #06080c;
+      padding: 12px;
+      text-transform: uppercase;
+      border-bottom: 2px solid var(--panel-border);
+    }
+
+    td {
+      font-family: 'Space Mono', monospace;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 12px;
+      border-bottom: 1px solid #161d2b;
+      color: var(--text-main);
+    }
+
+    tr.active-row {
+      background: rgba(0, 216, 255, 0.08);
+    }
+
+    tr.active-row td {
+      color: #fff;
+    }
+
+    tr.active-row td:first-child {
+      border-left: 3px solid var(--retro-green);
+    }
+
+    /* PROMINENT RETRO WATERMARK - VEXXTRO */
+    .watermark-vexxtro {
+      position: fixed;
+      bottom: 18px;
+      right: 20px;
+      z-index: 100;
+      background: rgba(8, 10, 15, 0.92);
+      border: 1px solid var(--retro-red);
+      padding: 8px 16px;
+      clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+      box-shadow: 0 0 20px var(--glow-red);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .watermark-stripes {
+      display: flex;
+      gap: 3px;
+    }
+
+    .watermark-stripes span {
+      width: 4px;
+      height: 18px;
+      transform: skewX(-15deg);
+    }
+
+    .watermark-text {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 2px;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+
+    .watermark-sub {
+      font-family: 'Space Mono', monospace;
+      font-size: 13px;
+      color: var(--retro-cyan);
+      border-left: 1px solid var(--panel-border);
+      padding-left: 8px;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Retro 4-Color Stripe Ribbon -->
+  <div class="retro-stripe-banner">
+    <div class="stripe-line stripe-cyan"></div>
+    <div class="stripe-line stripe-green"></div>
+    <div class="stripe-line stripe-yellow"></div>
+    <div class="stripe-line stripe-red"></div>
+  </div>
+
+  <div class="container">
+    
+    <!-- Header -->
+    <header>
+      <div class="brand-block">
+        <div class="brand-stripes-icon">
+          <div class="stripe-bar stripe-cyan"></div>
+          <div class="stripe-bar stripe-green"></div>
+          <div class="stripe-bar stripe-yellow"></div>
+          <div class="stripe-bar stripe-red"></div>
+        </div>
+        <div class="brand-text">
+          <h1>ARC <span>RAIDERS</span></h1>
+          <div class="brand-sub">TACTICAL BALLISTICS & SHIELD CALCULATOR</div>
+        </div>
+      </div>
+
+      <div class="system-status">
+        <div class="status-badge">
+          <div class="status-dot"></div> ANALYZER ACTIVE
+        </div>
+        <div>SYS_VER: 1984.88</div>
+      </div>
+    </header>
+
+    <!-- Mode Selection Tabs -->
+    <div class="mode-tabs">
+      <button id="modePveBtn" class="mode-btn active-pve" onclick="setTargetMode('PVE')">
+        <span>🤖 ARC MACHINES (PvE)</span>
+      </button>
+      <button id="modePvpBtn" class="mode-btn" onclick="setTargetMode('PVP')">
+        <span>🎯 ENEMY RAIDERS (PvP)</span>
+      </button>
+    </div>
+
+    <!-- Controls Section -->
+    <div class="controls-grid">
+      
+      <!-- Panel 1: Weapon Setup -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>// 01</span> WEAPON DATA
+          </div>
+          <div class="panel-code">[FIREARM]</div>
+        </div>
+
+        <div class="form-group">
+          <label>Category Filter</label>
+          <div class="filter-chips" id="weaponCategoryChips">
+            <div class="chip active" onclick="filterWeapons('ALL')">ALL</div>
+            <div class="chip" onclick="filterWeapons('Assault Rifle')">AR</div>
+            <div class="chip" onclick="filterWeapons('SMG')">SMG</div>
+            <div class="chip" onclick="filterWeapons('Rifle')">RIFLE</div>
+            <div class="chip" onclick="filterWeapons('Shotgun')">SHOTGUN</div>
+            <div class="chip" onclick="filterWeapons('Pistol')">PISTOL</div>
+          </div>
+
+          <label for="weaponSelect">Select Weapon</label>
+          <select id="weaponSelect" onchange="calculate()"></select>
+        </div>
+
+        <div class="form-group">
+          <label for="levelSelect">Upgrade Calibration Level</label>
+          <select id="levelSelect" onchange="calculate()">
+            <option value="1">Level I (Base Stat)</option>
+            <option value="2">Level II (+10% Boost)</option>
+            <option value="3">Level III (+20% Boost)</option>
+            <option value="4">Level IV / Amplified (+35% Boost)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Panel 2: Dynamic Target Setup (PvE ARC vs PvP Raider) -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title" id="targetPanelTitle">
+            <span>// 02</span> ARC THREAT TARGET
+          </div>
+          <div class="panel-code" id="targetPanelCode">[UNIT_ID]</div>
+        </div>
+
+        <!-- PvE Controls -->
+        <div id="pveControls">
+          <div class="form-group">
+            <label>Threat Tier Filter</label>
+            <div class="filter-chips" id="tierChips">
+              <div class="chip active" onclick="filterArcs('ALL')">ALL</div>
+              <div class="chip" onclick="filterArcs('Light')">LIGHT</div>
+              <div class="chip" onclick="filterArcs('Medium')">MEDIUM</div>
+              <div class="chip" onclick="filterArcs('Heavy')">HEAVY</div>
+            </div>
+
+            <label for="arcSelect">Select ARC Unit</label>
+            <select id="arcSelect" onchange="calculate()"></select>
+          </div>
+        </div>
+
+        <!-- PvP Controls -->
+        <div id="pvpControls" style="display: none;">
+          <div class="form-group">
+            <label>Raider Shield Type</label>
+            <div class="shield-grid">
+              <button class="shield-btn active-none" id="shieldNoneBtn" onclick="setShield('none')">
+                <span>NONE</span>
+                <span class="shield-sub">0 HP / 0%</span>
+              </button>
+              <button class="shield-btn" id="shieldLightBtn" onclick="setShield('light')">
+                <span>LIGHT</span>
+                <span class="shield-sub">40 HP / -40%</span>
+              </button>
+              <button class="shield-btn" id="shieldMediumBtn" onclick="setShield('medium')">
+                <span>MEDIUM</span>
+                <span class="shield-sub">70 HP / -42.5%</span>
+              </button>
+              <button class="shield-btn" id="shieldHeavyBtn" onclick="setShield('heavy')">
+                <span>HEAVY</span>
+                <span class="shield-sub">80 HP / -52.5%</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ballistic Hit Zone -->
+        <div class="form-group" style="margin-top: 16px;">
+          <label>Ballistic Impact Zone</label>
+          <div class="toggle-grid">
+            <button id="bodyBtn" class="toggle-btn active" onclick="setHitType('body')">BODY SHOT</button>
+            <button id="weakBtn" class="toggle-btn" onclick="setHitType('weakpoint')">WEAK / HEADSHOT</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Primary Results HUD Card -->
+    <div class="result-hud">
+      <div class="result-hud-stripe">
+        <div class="stripe-cyan"></div>
+        <div class="stripe-green"></div>
+        <div class="stripe-yellow"></div>
+        <div class="stripe-red"></div>
+      </div>
+
+      <div class="hud-title-bar">
+        <div class="hud-summary" id="summaryText">AWAITING TARGET DATA...</div>
+      </div>
+
+      <!-- Big LED Hits Display -->
+      <div class="hits-display">
+        <div class="hits-number" id="hitsResult">--</div>
+        <div class="hits-label" id="hitsLabelText">SHOTS TO NEUTRALIZE TARGET</div>
+      </div>
+
+      <!-- Segmented Analog Gauge -->
+      <div class="analog-gauge-box">
+        <div class="gauge-header">
+          <span id="gaugeTitle">SINGLE SHOT DAMAGE YIELD</span>
+          <span id="gaugePercentLabel" style="color: var(--retro-cyan);">0% HP / SHOT</span>
+        </div>
+        <div class="gauge-segments" id="gaugeSegments">
+          <!-- 20 LED Segments -->
+        </div>
+      </div>
+
+      <!-- Stat Grid Matrix -->
+      <div class="stat-matrix">
+        <div class="stat-box">
+          <div class="stat-value" id="damageResult" style="color: var(--retro-yellow);">--</div>
+          <div class="stat-label" id="damageLabel">BASE DMG</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value" id="arcHpResult" style="color: var(--retro-cyan);">--</div>
+          <div class="stat-label" id="hpLabel">TARGET HP</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value" id="magsResult" style="color: #ffffff;">--</div>
+          <div class="stat-label">MAGAZINES</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value" id="ttkResult" style="color: var(--retro-green);">--</div>
+          <div class="stat-label">EST. TTK (SEC)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Level Comparison Table -->
+    <div class="table-section">
+      <div class="table-title">
+        <span>// MATRIX</span> WEAPON UPGRADE LEVEL COMPARISON
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>WEAPON LEVEL</th>
+              <th>DAMAGE / SHOT</th>
+              <th>HITS TO KILL</th>
+              <th>MAGAZINES</th>
+            </tr>
+          </thead>
+          <tbody id="comparisonTable">
+            <!-- Filled dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RETRO WATERMARK - VEXXTRO -->
+  <div class="watermark-vexxtro">
+    <div class="watermark-stripes">
+      <span class="stripe-cyan"></span>
+      <span class="stripe-green"></span>
+      <span class="stripe-yellow"></span>
+      <span class="stripe-red"></span>
+    </div>
+    <div class="watermark-text">VEXXTRO</div>
+    <div class="watermark-sub">ARCHIVE</div>
+  </div>
+
+  <script>
+    // Updated Database of Weapons (Verified Base Stats from Community Data & Reference Charts)
+    const weapons = [
+      { name: "Anvil", category: "Pistol", damage: 40, mag: 6, fireRate: 1.17 },
+      { name: "Arpeggio", category: "Assault Rifle", damage: 9.5, mag: 24, fireRate: 7.70 },
+      { name: "Bettina", category: "Assault Rifle", damage: 14, mag: 20, fireRate: 5.50 },
+      { name: "Bobcat", category: "SMG", damage: 6, mag: 50, fireRate: 17.15 },
+      { name: "Burletta", category: "Pistol", damage: 10, mag: 12, fireRate: 6.88 },
+      { name: "Canto", category: "SMG", damage: 6.5, mag: 18, fireRate: 9.45 },
+      { name: "Dolabra", category: "Shotgun", damage: 50, mag: 8, fireRate: 2.33 },
+      { name: "Equalizer", category: "Special", damage: 8, mag: 50, fireRate: 10.0 },
+      { name: "Ferro", category: "Rifle", damage: 40, mag: 1, fireRate: 0.50 },
+      { name: "Hairpin", category: "Pistol", damage: 20, mag: 8, fireRate: 1.17 },
+      { name: "Hullcracker", category: "Launcher", damage: 100, mag: 5, fireRate: 0.34 },
+      { name: "Il Toro", category: "Shotgun", damage: 67.5, mag: 8, fireRate: 1.02 },
+      { name: "Jupiter", category: "Sniper Rifle", damage: 55, mag: 5, fireRate: 0.80 },
+      { name: "Kettle", category: "Assault Rifle", damage: 10, mag: 20, fireRate: 7.76 },
+      { name: "Osprey", category: "Rifle", damage: 45, mag: 8, fireRate: 0.82 },
+      { name: "Rattler", category: "Assault Rifle", damage: 9, mag: 22, fireRate: 8.50 },
+      { name: "Renegade", category: "Rifle", damage: 35, mag: 8, fireRate: 1.30 },
+      { name: "Stitcher", category: "SMG", damage: 7, mag: 20, fireRate: 11.18 },
+      { name: "Tempest", category: "Assault Rifle", damage: 10, mag: 25, fireRate: 9.23 },
+      { name: "Torrente", category: "LMG", damage: 8, mag: 90, fireRate: 13.36 },
+      { name: "Venator", category: "Pistol", damage: 18, mag: 10, fireRate: 5.83 },
+      { name: "Vulcano", category: "Shotgun", damage: 49.5, mag: 4, fireRate: 2.51 }
+    ];
+
+    // Database of ARC Enemies (PvE)
+    const arcs = [
+      { name: "Tick", hp: 50, weakMultiplier: 1.5, tier: "Light" },
+      { name: "Wasp", hp: 100, weakMultiplier: 2.0, tier: "Light" },
+      { name: "Snitch", hp: 100, weakMultiplier: 2.0, tier: "Light" },
+      { name: "Pop", hp: 100, weakMultiplier: 1.5, tier: "Light" },
+      { name: "Comet", hp: 150, weakMultiplier: 2.0, tier: "Medium" },
+      { name: "Firefly", hp: 200, weakMultiplier: 1.8, tier: "Medium" },
+      { name: "Turret", hp: 200, weakMultiplier: 1.5, tier: "Medium" },
+      { name: "Hornet", hp: 300, weakMultiplier: 2.0, tier: "Medium" },
+      { name: "Surveyor", hp: 400, weakMultiplier: 1.8, tier: "Medium" },
+      { name: "Sentinel", hp: 500, weakMultiplier: 2.0, tier: "Medium" },
+      { name: "Shredder", hp: 600, weakMultiplier: 1.8, tier: "Medium" },
+      { name: "Rollbot", hp: 800, weakMultiplier: 1.5, tier: "Medium" },
+      { name: "Bombardier", hp: 3000, weakMultiplier: 2.0, tier: "Heavy" },
+      { name: "Leaper", hp: 3500, weakMultiplier: 1.8, tier: "Heavy" },
+      { name: "Bastion", hp: 5000, weakMultiplier: 2.0, tier: "Heavy" }
+    ];
+
+    // PvP Shield Mechanics (Image Data)
+    const pvpShields = {
+      none: { name: "No Shield", hp: 0, reduction: 0.0 },
+      light: { name: "Light Shield (Green)", hp: 40, reduction: 0.40 },
+      medium: { name: "Medium Shield (Blue)", hp: 70, reduction: 0.425 },
+      heavy: { name: "Heavy Shield (Purple)", hp: 80, reduction: 0.525 }
+    };
+
+    // Level multipliers
+    const levelMultipliers = { 1: 1.0, 2: 1.10, 3: 1.20, 4: 1.35 };
+
+    let targetMode = 'PVE'; // PVE or PVP
+    let pvpShieldType = 'medium'; // default medium shield
+    let isWeakPoint = false;
+    let selectedCategoryFilter = 'ALL';
+    let selectedTierFilter = 'ALL';
+
+    function setTargetMode(mode) {
+      targetMode = mode;
+      
+      const pveBtn = document.getElementById("modePveBtn");
+      const pvpBtn = document.getElementById("modePvpBtn");
+
+      if (mode === 'PVE') {
+        pveBtn.className = "mode-btn active-pve";
+        pvpBtn.className = "mode-btn";
+        document.getElementById("pveControls").style.display = "block";
+        document.getElementById("pvpControls").style.display = "none";
+        document.getElementById("targetPanelTitle").innerHTML = "<span>// 02</span> ARC THREAT TARGET";
+        document.getElementById("targetPanelCode").textContent = "[UNIT_ID]";
+        document.getElementById("bodyBtn").textContent = "BODY SHOT";
+        document.getElementById("weakBtn").textContent = "WEAK POINT";
+      } else {
+        pveBtn.className = "mode-btn";
+        pvpBtn.className = "mode-btn active-pvp";
+        document.getElementById("pveControls").style.display = "none";
+        document.getElementById("pvpControls").style.display = "block";
+        document.getElementById("targetPanelTitle").innerHTML = "<span>// 02</span> ENEMY RAIDER (100 HP)";
+        document.getElementById("targetPanelCode").textContent = "[PVP_SHIELD]";
+        document.getElementById("bodyBtn").textContent = "BODY SHOT";
+        document.getElementById("weakBtn").textContent = "HEADSHOT (2.5x)";
+      }
+      calculate();
+    }
+
+    function setShield(type) {
+      pvpShieldType = type;
+      ['none', 'light', 'medium', 'heavy'].forEach(t => {
+        const btn = document.getElementById(`shield${t.charAt(0).toUpperCase() + t.slice(1)}Btn`);
+        if (t === type) {
+          btn.className = `shield-btn active-${t}`;
+        } else {
+          btn.className = "shield-btn";
+        }
+      });
+      calculate();
+    }
+
+    function filterWeapons(category) {
+      selectedCategoryFilter = category;
+      const chips = document.querySelectorAll('#weaponCategoryChips .chip');
+      chips.forEach(chip => {
+        const txt = chip.textContent;
+        chip.classList.toggle('active', 
+          txt === category || 
+          (category === 'Assault Rifle' && txt === 'AR') || 
+          (category === 'Rifle' && txt === 'RIFLE')
+        );
+      });
+      populateWeaponDropdown();
+      calculate();
+    }
+
+    function filterArcs(tier) {
+      selectedTierFilter = tier;
+      const chips = document.querySelectorAll('#tierChips .chip');
+      chips.forEach(chip => {
+        chip.classList.toggle('active', chip.textContent.includes(tier.toUpperCase()));
+      });
+      populateArcDropdown();
+      calculate();
+    }
+
+    function populateWeaponDropdown() {
+      const wSelect = document.getElementById("weaponSelect");
+      const currentVal = wSelect.value;
+      wSelect.innerHTML = "";
+
+      weapons.forEach((w, i) => {
+        if (selectedCategoryFilter === 'ALL' || w.category === selectedCategoryFilter || (selectedCategoryFilter === 'Rifle' && w.category.includes('Rifle'))) {
+          const opt = document.createElement("option");
+          opt.value = i;
+          opt.textContent = `${w.name} [${w.category}] - ${w.damage} Dmg`;
+          wSelect.appendChild(opt);
+        }
+      });
+
+      if (wSelect.options.length > 0) {
+        if (Array.from(wSelect.options).some(o => o.value === currentVal)) {
+          wSelect.value = currentVal;
+        } else {
+          wSelect.selectedIndex = 0;
+        }
+      }
+    }
+
+    function populateArcDropdown() {
+      const aSelect = document.getElementById("arcSelect");
+      const currentVal = aSelect.value;
+      aSelect.innerHTML = "";
+
+      arcs.forEach((a, i) => {
+        if (selectedTierFilter === 'ALL' || a.tier === selectedTierFilter) {
+          const opt = document.createElement("option");
+          opt.value = i;
+          opt.textContent = `${a.name} (${a.tier}) - ${a.hp} HP [${a.weakMultiplier}x Weak]`;
+          aSelect.appendChild(opt);
+        }
+      });
+
+      if (aSelect.options.length > 0) {
+        if (Array.from(aSelect.options).some(o => o.value === currentVal)) {
+          aSelect.value = currentVal;
+        } else {
+          aSelect.selectedIndex = 0;
+        }
+      }
+    }
+
+    function setHitType(type) {
+      isWeakPoint = (type === 'weakpoint');
+      document.getElementById("bodyBtn").classList.toggle("active", !isWeakPoint);
+      document.getElementById("weakBtn").classList.toggle("active", isWeakPoint);
+      calculate();
+    }
+
+    function renderGauge(percent) {
+      const container = document.getElementById("gaugeSegments");
+      container.innerHTML = "";
+      const totalSegments = 20;
+      const filledSegments = Math.min(20, Math.ceil((percent / 100) * totalSegments));
+
+      for (let i = 0; i < totalSegments; i++) {
+        const seg = document.createElement("div");
+        seg.className = "segment";
+
+        if (i < filledSegments) {
+          if (i < 5) seg.classList.add("filled-cyan");
+          else if (i < 10) seg.classList.add("filled-green");
+          else if (i < 15) seg.classList.add("filled-yellow");
+          else seg.classList.add("filled-red");
+        }
+        container.appendChild(seg);
+      }
+    }
+
+    // High Accuracy Calculation Logic
+    function calculateHits(weaponDmg, isWeak, mode, arcObj, shieldObj) {
+      let hitDmg = weaponDmg;
+
+      if (mode === 'PVE') {
+        if (isWeak) hitDmg *= arcObj.weakMultiplier;
+        const hits = Math.ceil(arcObj.hp / hitDmg);
+        return { hits, hitDmg, hp: arcObj.hp };
+      } else {
+        // PVP Raider Math (100 HP)
+        const H = 100;
+        if (isWeak) hitDmg *= 2.5; // Headshot multiplier = 2.5x
+        
+        if (shieldObj.hp === 0) {
+          const hits = Math.ceil(H / hitDmg);
+          return { hits, hitDmg, hp: H };
+        }
+
+        // Shield reduction logic formula: STK = n + ceil((H - n*(1-f)*D) / D)
+        const S = shieldObj.hp;
+        const f = shieldObj.reduction; // e.g. 0.40, 0.425, 0.525
+        
+        const n = Math.ceil(S / hitDmg); // landed shots while shield active
+        const damageToHealthPerShotShield = (1 - f) * hitDmg;
+        const healthLostInShieldPhase = n * damageToHealthPerShotShield;
+
+        let totalHits = 0;
+        if (healthLostInShieldPhase >= H) {
+          totalHits = Math.ceil(H / damageToHealthPerShotShield);
+        } else {
+          const remainingHealth = H - healthLostInShieldPhase;
+          const additionalHits = Math.ceil(remainingHealth / hitDmg);
+          totalHits = n + additionalHits;
+        }
+
+        return { hits: totalHits, hitDmg, hp: H, shieldDmg: damageToHealthPerShotShield };
+      }
+    }
+
+    function calculate() {
+      const wSelect = document.getElementById("weaponSelect");
+      if (!wSelect.value) return;
+
+      const weaponObj = weapons[wSelect.value];
+      const level = parseInt(document.getElementById("levelSelect").value);
+      const mult = levelMultipliers[level];
+      const weaponDmg = weaponObj.damage * mult;
+
+      let arcObj = null;
+      let shieldObj = pvpShields[pvpShieldType];
+
+      if (targetMode === 'PVE') {
+        const aSelect = document.getElementById("arcSelect");
+        if (!aSelect.value) return;
+        arcObj = arcs[aSelect.value];
+      }
+
+      const res = calculateHits(weaponDmg, isWeakPoint, targetMode, arcObj, shieldObj);
+
+      // Calculations
+      const hits = res.hits;
+      const displayDmg = Math.round(res.hitDmg * 10) / 10;
+      const mags = (hits / weaponObj.mag).toFixed(1);
+      const ttk = weaponObj.fireRate > 0 ? ((hits - 1) / weaponObj.fireRate).toFixed(2) : "--";
+
+      // Output DOM
+      document.getElementById("hitsResult").textContent = hits;
+      document.getElementById("damageResult").textContent = displayDmg;
+      document.getElementById("arcHpResult").textContent = res.hp;
+      document.getElementById("magsResult").textContent = mags;
+      document.getElementById("ttkResult").textContent = `${ttk}s`;
+
+      if (targetMode === 'PVE') {
+        document.getElementById("summaryText").textContent = 
+          `${weaponObj.name} [LVL ${level}] vs ${arcObj.name} [${isWeakPoint ? 'WEAK POINT' : 'BODY'}]`;
+        document.getElementById("damageLabel").textContent = "EFFECTIVE DMG";
+        document.getElementById("hpLabel").textContent = "TARGET HP";
+      } else {
+        document.getElementById("summaryText").textContent = 
+          `${weaponObj.name} [LVL ${level}] vs RAIDER [${shieldObj.name.toUpperCase()} / ${isWeakPoint ? 'HEADSHOT' : 'BODY'}]`;
+        document.getElementById("damageLabel").textContent = "HIT DMG";
+        document.getElementById("hpLabel").textContent = "RAIDER HP";
+      }
+
+      const damageRatio = Math.min(100, Math.round((displayDmg / res.hp) * 100));
+      document.getElementById("gaugePercentLabel").textContent = `${damageRatio}% HP / SHOT`;
+      renderGauge(damageRatio);
+
+      // Level Comparison Table
+      const tbody = document.getElementById("comparisonTable");
+      tbody.innerHTML = "";
+
+      const levelNames = [
+        "LEVEL I (BASE)", 
+        "LEVEL II (+10%)", 
+        "LEVEL III (+20%)", 
+        "LEVEL IV / AMPLIFIED (+35%)"
+      ];
+
+      for (let lvl = 1; lvl <= 4; lvl++) {
+        const rowMult = levelMultipliers[lvl];
+        const rowWeaponDmg = weaponObj.damage * rowMult;
+        const rowRes = calculateHits(rowWeaponDmg, isWeakPoint, targetMode, arcObj, shieldObj);
+
+        const rowDisplayDmg = Math.round(rowRes.hitDmg * 10) / 10;
+        const rowHits = rowRes.hits;
+        const rowMags = (rowHits / weaponObj.mag).toFixed(1);
+
+        const tr = document.createElement("tr");
+        if (lvl === level) tr.className = "active-row";
+
+        tr.innerHTML = `
+          <td>${levelNames[lvl - 1]}</td>
+          <td><span style="color: var(--retro-yellow);">${rowDisplayDmg}</span> dmg</td>
+          <td style="color: var(--retro-green); font-weight: bold;">${rowHits} ${rowHits === 1 ? 'Hit' : 'Hits'}</td>
+          <td>${rowMags} Mag(s)</td>
+        `;
+        tbody.appendChild(tr);
+      }
+    }
+
+    window.onload = () => {
+      populateWeaponDropdown();
+      populateArcDropdown();
+
+      // Defaults: Kettle vs Wasp
+      const wSelect = document.getElementById("weaponSelect");
+      const aSelect = document.getElementById("arcSelect");
+      
+      wSelect.value = 13; // Kettle
+      if (aSelect) aSelect.value = 1;  // Wasp
+      
+      calculate();
+    };
+  <\/script>
+</body>
+</html></script>
+<script type="text/plain" id="pg1"><!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARC Raiders - Upgrade Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,500;0,600;0,700;1,500;1,700&family=Russo+One&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--c:#00d8ff;--g:#00ff66;--y:#ffcc00;--r:#ff2a4b;--bg:#080a0f;--p:#0f131c;--b:#222b3d;--m:#8a99ad}
+*{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-tap-highlight-color:transparent}
+body{font-family:'Chakra Petch',sans-serif;background:var(--bg);color:#f0f4f8;padding-bottom:40px;
+background-image:linear-gradient(rgba(0,216,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,216,255,.03) 1px,transparent 1px);background-size:32px 32px}
+.bar{height:5px;background:linear-gradient(90deg,var(--c) 25%,var(--g) 25% 50%,var(--y) 50% 75%,var(--r) 75%)}
+.w{max-width:700px;margin:0 auto;padding:14px}
+h1{font-size:22px;letter-spacing:3px;text-transform:uppercase}h1 span{color:var(--r)}
+.sub{font-family:'Space Mono',monospace;font-size:11px;color:var(--c);letter-spacing:2px;margin:3px 0 12px}
+.tabs{display:flex;gap:8px;margin-bottom:12px}
+.tabs button{flex:1;padding:11px;background:var(--p);border:1px solid var(--b);color:var(--m);font:700 14px 'Chakra Petch';letter-spacing:2px}
+.tabs button.on{border-color:var(--c);color:var(--c);box-shadow:0 0 12px rgba(0,216,255,.3)}
+.st{background:var(--p);border:1px solid var(--b);margin-bottom:12px}
+.sh{display:flex;justify-content:space-between;padding:10px 12px;font:700 15px 'Russo One';letter-spacing:1px;color:var(--y);border-bottom:1px solid var(--b)}
+.sh small{font:12px 'Space Mono';color:var(--m)}
+.lv{padding:8px 12px;border-bottom:1px solid var(--b)}.lv:last-child{border:0}
+.lh{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.lh b{font-size:13px;letter-spacing:1px}
+.tag{font:700 11px 'Space Mono';padding:4px 8px;border:1px solid var(--b);color:var(--m);background:none}
+.tag.rdy{color:var(--g);border-color:var(--g)}.tag.dn{color:#000;background:var(--g);border-color:var(--g)}
+.lv.done .it{opacity:.35}
+.it{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:14px}
+.it.ok span:first-child{color:var(--g)}
+.ct{display:flex;align-items:center;gap:8px}.ct b{font:700 13px 'Space Mono';min-width:52px;text-align:center}
+.ct button{width:32px;height:32px;background:#161c28;border:1px solid var(--b);color:var(--c);font:700 18px sans-serif}
+.empty{color:var(--m);text-align:center;padding:30px 0;font-family:'Space Mono',monospace;font-size:13px}
+.rs{margin-top:16px;width:100%;padding:10px;background:none;border:1px solid var(--r);color:var(--r);font:700 12px 'Chakra Petch';letter-spacing:2px}
+.note{font:11px 'Space Mono';color:var(--m);margin-top:12px;line-height:1.5}
+</style></head><body><div class="bar"></div>
+<div class="w"><h1>ARC <span>Raiders</span></h1><div class="sub">UPGRADE &amp; LOOT TRACKER</div>
+<div class="tabs"><button id="t0" onclick="tab(0)">STATIONS</button><button id="t1" onclick="tab(1)">STILL NEED</button></div>
+<div id="v"></div>
+<button class="rs" onclick="rst()">RESET ALL PROGRESS</button>
+<p class="note">Counts = items you currently hold (shared across stations). Tap a level to mark it built; its materials are deducted. Requirements are from community guides (Nov 2025) and may change with patches - edit the DATA block in index.html to update.</p></div>
+<script>
+// DATA: [station, first level number, [ [ [item, qty], ... ] per level ]]
+const D=[
+["Gunsmith",1,[[["Metal Parts",20],["Rubber Parts",30]],[["Rusted Tools",3],["Mechanical Components",5],["Wasp Driver",8]],[["Rusted Gear",3],["Advanced Mechanical Components",5],["Sentinel Firing Core",3]]]],
+["Gear Bench",1,[[["Plastic Parts",25],["Fabric",30]],[["Power Cable",3],["Electrical Components",5],["Hornet Driver",5]],[["Industrial Battery",3],["Advanced Electrical Components",5],["Bastion Cell",6]]]],
+["Medical Lab",1,[[["Fabric",50],["ARC Alloy",6]],[["Cracked Bioscanner",2],["Durable Cloth",5],["Tick Pod",8]],[["Rusted Shut Medical Kit",3],["Antiseptic",8],["Bastion Part",3]]]],
+["Explosives Station",1,[[["Chemicals",50],["ARC Alloy",6]],[["Synthesized Fuel",3],["Crude Explosives",5],["Pop Trigger",5]],[["Laboratory Reagents",3],["Explosive Compound",5],["Rocketeer Driver",3]]]],
+["Utility Station",1,[[["Plastic Parts",50],["ARC Alloy",6]],[["Damaged Heat Sink",2],["Electrical Components",5],["Snitch Scanner",6]],[["Fried Motherboard",3],["Advanced Electrical Components",3],["Leaper Pulse Unit",3]]]],
+["Refiner",1,[[["Metal Parts",60],["ARC Powercell",5]],[["Toaster",3],["ARC Motion Core",5],["Fireball Burner",8]],[["Motor",3],["ARC Circuitry",10],["Bombardier Cell",6]]]],
+["Scrappy",2,[[["Dog Collar",1]],[["Lemon",3],["Apricot",3]],[["Prickly Pear",6],["Olives",6],["Cat Bed",1]],[["Mushroom",12],["Apricot",12],["Very Comfortable Pillow",3]]]]
+];
+let S={built:{},own:{},tab:0};
+try{S=Object.assign(S,JSON.parse(localStorage.getItem('arct')||'{}'))}catch(e){}
+function save(){try{localStorage.setItem('arct',JSON.stringify(S))}catch(e){}}
+function ch(n,d){S.own[n]=Math.max(0,(S.own[n]||0)+d);save();draw()}
+function row(n,q){const o=S.own[n]||0;return `<div class="it ${o>=q?'ok':''}"><span>${n}</span><span class="ct"><button onclick="ch('${n}',-1)">&minus;</button><b>${o}/${q}</b><button onclick="ch('${n}',1)">+</button></span></div>`}
+function tog(k){const [i,j]=k.split('-').map(Number),on=!S.built[k],s=D[i][2][j];
+ s.forEach(([n,q])=>{S.own[n]=Math.max(0,(S.own[n]||0)+(on?-q:q))});
+ if(on)S.built[k]=1;else delete S.built[k];save();draw()}
+function tab(t){S.tab=t;save();draw()}
+function rst(){if(confirm('Reset all progress and counts?')){S={built:{},own:{},tab:0};save();draw()}}
+function draw(){
+ t0.className=S.tab==0?'on':'';t1.className=S.tab==1?'on':'';
+ let h='';
+ if(S.tab==0){D.forEach(([nm,o,L],i)=>{
+  const nd=L.filter((_,j)=>S.built[i+'-'+j]).length;
+  h+=`<div class="st"><div class="sh">${nm.toUpperCase()}<small>${nd}/${L.length}</small></div>`;
+  L.forEach((items,j)=>{const k=i+'-'+j,dn=!!S.built[k],rd=items.every(([n,q])=>(S.own[n]||0)>=q);
+   h+=`<div class="lv ${dn?'done':''}"><div class="lh"><b>LEVEL ${j+o}</b><button class="tag ${dn?'dn':rd?'rdy':''}" onclick="tog('${k}')">${dn?'BUILT &check;':rd?'READY - TAP TO BUILD':'MARK BUILT'}</button></div>${items.map(([n,q])=>row(n,q)).join('')}</div>`});
+  h+='</div>'})}
+ else{const need={};
+  D.forEach(([nm,o,L],i)=>L.forEach((items,j)=>{if(!S.built[i+'-'+j])items.forEach(([n,q])=>need[n]=(need[n]||0)+q)}));
+  const ks=Object.keys(need).sort((a,b)=>((S.own[b]||0)>=need[b])-((S.own[a]||0)>=need[a])*1||a.localeCompare(b)).sort((a,b)=>(((S.own[a]||0)>=need[a])-((S.own[b]||0)>=need[b])));
+  h=ks.length?`<div class="st" style="padding:6px 12px">${ks.map(n=>row(n,need[n])).join('')}</div>`:'<div class="empty">ALL UPGRADES BUILT</div>'}
+ v.innerHTML=h}
+draw();
+<\/script></body></html></script>
+<script type="text/plain" id="pg2"><!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARC Raiders - Craft Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,500;0,600;0,700;1,500;1,700&family=Russo+One&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--c:#00d8ff;--g:#00ff66;--y:#ffcc00;--r:#ff2a4b;--bg:#080a0f;--p:#0f131c;--b:#222b3d;--m:#8a99ad}
+*{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-tap-highlight-color:transparent}
+body{font-family:'Chakra Petch',sans-serif;background:var(--bg);color:#f0f4f8;padding-bottom:40px;
+background-image:linear-gradient(rgba(0,216,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,216,255,.03) 1px,transparent 1px);background-size:32px 32px}
+.bar{height:5px;background:linear-gradient(90deg,var(--c) 25%,var(--g) 25% 50%,var(--y) 50% 75%,var(--r) 75%)}
+.w{max-width:700px;margin:0 auto;padding:14px}
+h1{font-size:22px;letter-spacing:3px;text-transform:uppercase}h1 span{color:var(--r)}
+.sub{font-family:'Space Mono',monospace;font-size:11px;color:var(--c);letter-spacing:2px;margin:3px 0 12px}
+.tabs{display:flex;gap:8px;margin-bottom:12px}
+.tabs button{flex:1;padding:11px;background:var(--p);border:1px solid var(--b);color:var(--m);font:700 14px 'Chakra Petch';letter-spacing:2px}
+.tabs button.on{border-color:var(--c);color:var(--c);box-shadow:0 0 12px rgba(0,216,255,.3)}
+.st{background:var(--p);border:1px solid var(--b);margin-bottom:12px}
+.sh{display:flex;justify-content:space-between;padding:10px 12px;font:700 15px 'Russo One';letter-spacing:1px;color:var(--y);border-bottom:1px solid var(--b)}
+.sh small{font:12px 'Space Mono';color:var(--m)}
+.lv{padding:8px 12px;border-bottom:1px solid var(--b)}.lv:last-child{border:0}
+.lh{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.lh b{font-size:13px;letter-spacing:1px}
+.tag{font:700 11px 'Space Mono';padding:4px 8px;border:1px solid var(--b);color:var(--m);background:none}
+.tag.rdy{color:var(--g);border-color:var(--g)}.tag.dn{color:#000;background:var(--g);border-color:var(--g)}
+.lv.done .it{opacity:.35}
+.it{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:14px}
+.it.ok span:first-child{color:var(--g)}
+.ct{display:flex;align-items:center;gap:8px}.ct b{font:700 13px 'Space Mono';min-width:52px;text-align:center}
+.ct button{width:32px;height:32px;background:#161c28;border:1px solid var(--b);color:var(--c);font:700 18px sans-serif}
+.empty{color:var(--m);text-align:center;padding:30px 0;font-family:'Space Mono',monospace;font-size:13px}
+.rs{margin-top:16px;width:100%;padding:10px;background:none;border:1px solid var(--r);color:var(--r);font:700 12px 'Chakra Petch';letter-spacing:2px}
+.note{font:11px 'Space Mono';color:var(--m);margin-top:12px;line-height:1.5}
+</style></head><body><div class="bar"></div>
+<div class="w"><h1>ARC <span>Raiders</span></h1><div class="sub">WEAPON &amp; AMMO CRAFT TRACKER</div>
+<div class="tabs"><button id="t0" onclick="tab(0)">WEAPONS</button><button id="t1" onclick="tab(1)">AMMO</button><button id="t2" onclick="tab(2)">PARTS</button><button id="t3" onclick="tab(3)">LIST</button></div>
+<div id="v"></div>
+<button class="rs" onclick="rst()">RESET ALL</button>
+<p class="note">PLAN = how many you want to craft (ammo: how many batches). The LIST tab totals every material still needed; set what you hold with +/-. CRAFT deducts materials. Recipes from community guides (Oct 2026); weapons found in the game but not listed here (e.g. Kettle, Ferro, Hairpin, Stitcher) had no confirmed recipe. Edit the DATA block in index.html to add or fix recipes.</p></div>
+<script>
+// DATA: [category, name, bench, [[item, qty],...], yield per craft (optional)]
+const R=[
+["W","Anvil","Gunsmith 1",[["Mechanical Components",5],["Simple Gun Parts",6]]],
+["W","Burletta","Gunsmith 1",[["Mechanical Components",3],["Simple Gun Parts",3]]],
+["W","IL Toro","Gunsmith 1",[["Mechanical Components",5],["Simple Gun Parts",6]]],
+["W","Rattler","Workbench",[["Metal Parts",10],["Rubber Parts",5]]],
+["W","Osprey","Gunsmith 2",[["Advanced Mechanical Components",2],["Medium Gun Parts",3],["Wires",7]]],
+["W","Torrente","Gunsmith 2",[["Advanced Mechanical Components",2],["Medium Gun Parts",3],["Steel Spring",6]]],
+["W","Venator","Gunsmith 2",[["Advanced Mechanical Components",2],["Medium Gun Parts",3],["Magnet",5]]],
+["W","Bettina","Gunsmith 3",[["Advanced Mechanical Components",3],["Heavy Gun Parts",3],["Canister",3]]],
+["W","Bobcat","Gunsmith 3",[["Magnetic Accelerator",1],["Light Gun Parts",3],["Exodus Modules",2]]],
+["W","Tempest","Gunsmith 3",[["Magnetic Accelerator",1],["Medium Gun Parts",3],["Exodus Modules",2]]],
+["W","Vulcano","Gunsmith 3",[["Magnetic Accelerator",1],["Heavy Gun Parts",3],["Exodus Modules",1]]],
+["W","Hullcracker","Gunsmith 3",[["Magnetic Accelerator",1],["Heavy Gun Parts",3],["Exodus Modules",1]]],
+["W","Aphelion","Gunsmith 3",[["Magnetic Accelerator",3],["Complex Gun Parts",3],["Matriarch Reactor",1]]],
+["W","Equalizer","Gunsmith 3",[["Magnetic Accelerator",3],["Complex Gun Parts",3],["Queen Reactor",1]]],
+["W","Jupiter","Gunsmith 3",[["Magnetic Accelerator",3],["Complex Gun Parts",3],["Queen Reactor",1]]],
+["A","Light Ammo","Workbench",[["Metal Parts",3],["Chemicals",2]],25],
+["A","Medium Ammo","Workbench",[["Metal Parts",3],["Chemicals",2]],20],
+["A","Heavy Ammo","Workbench",[["Metal Parts",3],["Chemicals",2]]],
+["A","Shotgun Ammo","Workbench",[["Metal Parts",3],["Chemicals",2]],5],
+["A","Launcher Ammo","Workbench",[["Metal Parts",5],["Crude Explosives",1]]],
+["A","Energy Clip","Workbench",[["Advanced ARC Powercell",1],["Battery",2]],5],
+["P","Light Gun Parts","Refiner 2",[["Simple Gun Parts",4]]],
+["P","Medium Gun Parts","Refiner 2",[["Simple Gun Parts",4]]],
+["P","Heavy Gun Parts","Refiner 2",[["Simple Gun Parts",4]]],
+["P","Complex Gun Parts","Refiner 3",[["Light Gun Parts",2],["Medium Gun Parts",2],["Heavy Gun Parts",2]]]
+];
+const TABS=["W","A","P"];
+let S={want:{},own:{},tab:0};
+try{S=Object.assign(S,JSON.parse(localStorage.getItem('arcc')||'{}'))}catch(e){}
+function save(){try{localStorage.setItem('arcc',JSON.stringify(S))}catch(e){}}
+const o=n=>S.own[n]||0;
+function ch(n,d){S.own[n]=Math.max(0,o(n)+d);save();draw()}
+function pl(i,d){S.want[i]=Math.max(0,(S.want[i]||0)+d);save();draw()}
+function cr(i){const m=R[i][3];if(!m.every(([a,q])=>o(a)>=q))return;m.forEach(([a,q])=>S.own[a]=o(a)-q);if(S.want[i]>0)S.want[i]--;save();draw()}
+function tab(t){S.tab=t;save();draw()}
+function rst(){if(confirm('Reset all counts and plans?')){S={want:{},own:{},tab:0};save();draw()}}
+function row(n,q){return `<div class="it ${o(n)>=q?'ok':''}"><span>${n}</span><span class="ct"><button onclick="ch('${n}',-1)">&minus;</button><b>${o(n)}/${q}</b><button onclick="ch('${n}',1)">+</button></span></div>`}
+function card(i){const [c,n,b,m,y]=R[i],ok=m.every(([a,q])=>o(a)>=q);
+ return `<div class="st"><div class="sh">${n.toUpperCase()}<small>${b}${y?' &middot; x'+y:''}</small></div><div class="lv">${m.map(([a,q])=>row(a,q)).join('')}<div class="lh" style="margin-top:8px"><span class="ct"><button onclick="pl(${i},-1)">&minus;</button><b>PLAN ${S.want[i]||0}</b><button onclick="pl(${i},1)">+</button></span><button class="tag ${ok?'rdy':''}" onclick="cr(${i})">${ok?'CRAFT NOW':'MISSING'}</button></div></div></div>`}
+function draw(){
+ for(let k=0;k<4;k++)document.getElementById('t'+k).className=S.tab==k?'on':'';
+ let h='';
+ if(S.tab<3)R.forEach((r,i)=>{if(r[0]==TABS[S.tab])h+=card(i)});
+ else{const need={};
+  R.forEach((r,i)=>{const w=S.want[i]||0;if(w)r[3].forEach(([a,q])=>need[a]=(need[a]||0)+q*w)});
+  const ks=Object.keys(need).sort((a,b)=>((o(a)>=need[a])-(o(b)>=need[b]))||a.localeCompare(b));
+  h=ks.length?`<div class="st" style="padding:6px 12px">${ks.map(n=>row(n,need[n])).join('')}</div>`:'<div class="empty">NOTHING PLANNED<br>USE + ON A WEAPON OR AMMO</div>'}
+ v.innerHTML=h}
+draw();
+<\/script></body></html></script>
+<script>
+function go(i){
+  for(let k=0;k<3;k++){
+    const p=document.getElementById('p'+k);
+    if(k==i&&!p.srcdoc)p.srcdoc=document.getElementById('pg'+k).textContent.split('<\\/script').join('</script');
+    p.classList.toggle('on',k==i);
+    document.getElementById('b'+k).classList.toggle('on',k==i);
+  }
+  try{localStorage.setItem('arck-tab',i)}catch(e){}
+}
+let t=0;try{t=+localStorage.getItem('arck-tab')||0}catch(e){}
+go(t>2?0:t);
+</script></body></html>
